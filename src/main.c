@@ -7,6 +7,9 @@
 Window *window;
 TextLayer *text_layer;
 
+GColor back_color;
+GColor text_color;
+
 int random(int max) {
 	return rand() % (max + 1);
 }
@@ -59,16 +62,19 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 void handle_init(void) {
+  srand((unsigned int) time(NULL));
+
+  back_color = GColorBlack;
+  text_color = GColorWhite;
+
   window = window_create();
   window_stack_push(window, true);
-  window_set_background_color(window, GColorBlack);
-  
-  srand((unsigned int) time(NULL));
+  window_set_background_color(window, back_color);
   
   Layer *window_layer = window_get_root_layer(window);
 
   text_layer = text_layer_create(GRect(0, -2, 144, 168));
-  text_layer_set_text_color(text_layer, GColorWhite);
+  text_layer_set_text_color(text_layer, text_color);
   text_layer_set_background_color(text_layer, GColorClear);
   text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   layer_add_child(window_layer, text_layer_get_layer(text_layer));

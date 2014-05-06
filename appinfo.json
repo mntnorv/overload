@@ -15,7 +15,7 @@
     "versionLabel": "1.0",
     "companyName": "Mantas Norvaisa",
     "capabilities": [
-        ""
+        "configurable"
     ],
     "longName": "Overload",
     "watchapp": {
