@@ -1,0 +1,25 @@
+{
+    "shortName": "Overload",
+    "versionCode": 1,
+    "resources": {
+        "media": [
+            {
+                "menuIcon": true,
+                "file": "images/icon.png",
+                "name": "IMAGE_ICON",
+                "type": "png"
+            }
+        ]
+    },
+    "uuid": "1ea29a7b-8f2d-4c85-b917-84a7a4a0b55d",
+    "versionLabel": "1.0",
+    "companyName": "mntnorv@gmail.com",
+    "capabilities": [
+        ""
+    ],
+    "longName": "Overload",
+    "watchapp": {
+        "watchface": true
+    },
+    "appKeys": {}
+}
