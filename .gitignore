@@ -1,23 +1,15 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Ignore waf build tool generated files
+.waf*
+build
+.lock-waf*
 
-# Libraries
-*.lib
-*.a
+# Ignore linked files/directories
+waf
+wscript
+tools
+include
+lib
+pebble_app.ld
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+# Ignore other generated files
+serial_dump.txt
