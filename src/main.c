@@ -3,6 +3,10 @@
 #define COLUMNS 24
 #define LINES 12
 #define TEXT_LENGTH ((COLUMNS + 1) * LINES)
+
+enum {
+  CONFIG_COLOR = 0x0
+};
   
 Window *window;
 TextLayer *text_layer;
@@ -61,6 +65,23 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   text_layer_set_text(text_layer, overload_text);
 }
 
+void in_received_handler(DictionaryIterator *received, void *context) {
+  Tuple *color_tuple = dict_find(received, CONFIG_COLOR);
+  if (color_tuple) {
+    char *config_color = color_tuple->value->cstring;
+    if (strcmp(config_color, "black") == 0) {
+      text_color = GColorWhite;
+      back_color = GColorBlack;
+    } else {
+      text_color = GColorBlack;
+      back_color = GColorWhite;
+    }
+
+    window_set_background_color(window, back_color);
+    text_layer_set_text_color(text_layer, text_color);
+  }
+}
+
 void handle_init(void) {
   srand((unsigned int) time(NULL));
 
@@ -81,6 +102,11 @@ void handle_init(void) {
   
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   handle_minute_tick(NULL, MINUTE_UNIT);
+
+  app_message_register_inbox_received(in_received_handler);
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
 }
 
 void handle_deinit(void) {

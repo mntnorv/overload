@@ -1,6 +1,6 @@
 {
     "shortName": "Overload",
-    "versionCode": 1,
+    "versionCode": 3,
     "resources": {
         "media": [
             {
@@ -21,5 +21,7 @@
     "watchapp": {
         "watchface": true
     },
-    "appKeys": {}
+    "appKeys": {
+        "color": 0
+    }
 }
