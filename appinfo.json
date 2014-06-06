@@ -22,6 +22,7 @@
         "watchface": true
     },
     "appKeys": {
-        "color": 0
+        "type": 0,
+        "color": 1
     }
 }

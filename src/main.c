@@ -6,16 +6,18 @@
 #define TEXT_LENGTH ((COLUMNS + 1) * ROWS)
 
 enum {
-  CONFIG_COLOR = 0x0
-};
-
-enum {
-  COLOR_KEY = 0x0
+  KEY_TYPE  = 0x0,
+  KEY_COLOR = 0x1
 };
 
 enum {
   COLOR_WHITE = 0x0,
   COLOR_BLACK = 0x1
+};
+
+enum {
+  TYPE_GET_SETTINGS = 0x0,
+  TYPE_SET_SETTINGS = 0x1
 };
 
 Window *window;
@@ -24,16 +26,16 @@ TextLayer *text_layer;
 GColor back_color;
 GColor text_color;
 
-int config_color;
+uint8_t config_color;
 
 void save_config() {
-  persist_write_int(COLOR_KEY, config_color);
+  persist_write_int(KEY_COLOR, (int32_t) config_color);
 }
 
 void load_config() {
   config_color = COLOR_BLACK;
-  if (persist_exists(COLOR_KEY)) {
-    config_color = persist_read_int(COLOR_KEY);
+  if (persist_exists(KEY_COLOR)) {
+    config_color = (uint8_t) persist_read_int(KEY_COLOR);
   }
 }
 
@@ -73,26 +75,43 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   text_layer_set_text(text_layer, overload_text);
 }
 
-void in_received_handler(DictionaryIterator *received, void *context) {
-  Tuple *color_tuple = dict_find(received, CONFIG_COLOR);
+void handle_get_settings() {
+  const uint8_t key_count = 1;
+  DictionaryIterator *iter;
+
+  app_message_outbox_begin(&iter);
+  dict_write_int8(iter, KEY_COLOR, config_color);
+  app_message_outbox_send();
+}
+
+void handle_set_settings(DictionaryIterator *received) {
+  Tuple *color_tuple = dict_find(received, KEY_COLOR);
 
   if (color_tuple) {
-    char *color = color_tuple->value->cstring;
-    
-    if (strcmp(color, "black") == 0) {
-      config_color = COLOR_BLACK;
-    } else {
-      config_color = COLOR_WHITE;
-    }
-
+    config_color = color_tuple->value->uint8;
     update_colors();
+  }
+}
+
+void in_received_handler(DictionaryIterator *received, void *context) {
+  Tuple *type_tuple = dict_find(received, KEY_TYPE);
+
+  if (type_tuple) {
+    switch (type_tuple->value->uint8) {
+    case TYPE_GET_SETTINGS:
+      handle_get_settings();
+      break;
+    case TYPE_SET_SETTINGS:
+      handle_set_settings(received);
+      break; 
+    }
   }
 }
 
 void handle_init(void) {
   load_config();
 
-  srand((unsigned int) time(NULL));
+  srand((uint32_t) time(NULL));
 
   window = window_create();
   window_stack_push(window, true);
